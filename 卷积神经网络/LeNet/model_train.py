@@ -16,8 +16,8 @@ def train_val_data_process():
     train_data = FashionMNIST(root='./data', train=True, download=True,
                               transform=transforms.Compose([transforms.Resize(size=28), transforms.ToTensor()]))
     train_data,val_data = Data.random_split(train_data, [round(0.8*len(train_data)), round(0.2*len(train_data))])
-    train_dataloader = DataLoader(train_data, batch_size=256, shuffle=True,num_workers=0)
-    val_dataloader = DataLoader(val_data, batch_size=256, shuffle=True,num_workers=0)
+    train_dataloader = DataLoader(train_data, batch_size=128, shuffle=True,num_workers=0)
+    val_dataloader = DataLoader(val_data, batch_size=128, shuffle=True,num_workers=0)
     return train_dataloader, val_dataloader
 
 def train_model_process(model,train_dataloader,val_dataloader,num_epochs):
@@ -121,5 +121,5 @@ def matlap_acc_loss(tran_process):
 if __name__ == '__main__':
     LeNet = LeNet()
     train_dataloader, val_dataloader = train_val_data_process()
-    train_process = train_model_process(LeNet,train_dataloader,train_dataloader,num_epochs=20)
+    train_process = train_model_process(LeNet,train_dataloader,train_dataloader,num_epochs=1000)
     matlap_acc_loss(train_process)

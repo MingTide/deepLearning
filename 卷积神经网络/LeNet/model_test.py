@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch
 import  copy
 import pandas as pd
+import numpy as np
 from model import LeNet
 # 处理训练集和验证集
 def test_val_data_process():
@@ -31,7 +32,7 @@ def test_model_process(model,test_data_dataloader):
             model.eval()
             output = model(test_data_x)
             pre_label = torch.argmax(output, dim=1)
-            test_corrects += torch.sum(pre_label == test_data_y.data)
+            test_corrects += torch.sum(pre_label == test_data_y.item())
             test_num += test_data_x.size(0)
     test_acc = test_corrects.double().item() / test_num
     print(" Test acc:{:.4f}".format(test_acc))
@@ -43,3 +44,21 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load('./best_model.pth'))
     test_data = test_val_data_process()
     test_model_process(model,test_data)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    classes = ['T-shirt/top','Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+    model.to(device)
+    with torch.no_grad():
+        for test_data_x,test_data_y in test_data:
+            test_data_x = test_data_x.to(device)
+            test_data_y = test_data_y.to(device)
+            # 设置成训练模式
+            model.eval()
+            out_put = model(test_data_x)
+            pre_label = torch.argmax(out_put, dim=1)
+            result = pre_label.item()
+            label = test_data_y.item()
+            print("预测值：{}--------------真实值{}".format(classes[result],classes[label]))
+
+
+
